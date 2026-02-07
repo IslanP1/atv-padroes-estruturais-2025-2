@@ -11,4 +11,9 @@ public abstract class VideoDecorator implements IVideoComponent{
     public void play() {
         videoComponent.play();
     }
+
+    @Override
+    public byte[] getData() {
+        return videoComponent.getData();
+    }
 }
