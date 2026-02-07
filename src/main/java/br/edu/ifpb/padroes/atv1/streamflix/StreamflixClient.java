@@ -1,51 +1,15 @@
 package br.edu.ifpb.padroes.atv1.streamflix;
 
-import br.edu.ifpb.padroes.atv1.streamflix.auth.AuthenticationService;
-import br.edu.ifpb.padroes.atv1.streamflix.converter.VideoConverter;
 import br.edu.ifpb.padroes.atv1.streamflix.services.AWSS3Service;
-import br.edu.ifpb.padroes.atv1.streamflix.services.GoogleCloudStorage;
-import br.edu.ifpb.padroes.atv1.streamflix.stream.StreamingService;
-import br.edu.ifpb.padroes.atv1.streamflix.subtitle.SubtitleService;
+import br.edu.ifpb.padroes.atv1.streamflix.services.AWSS3StorageAdapter;
+import br.edu.ifpb.padroes.atv1.streamflix.services.IStorageService;
 
 public class StreamflixClient {
+    public static void main(String[] args ) {
+        IStorageService storageService = new AWSS3StorageAdapter(new AWSS3Service());
+        // ou IStorageService storageService = new GCSStorageAdapter(new GoogleCloudStorage());
 
-    public void watchVideo(String userId, String token, String videoId) {
-        // Cliente precisa conhecer TODOS os subsistemas!
-        AuthenticationService auth = new AuthenticationService();
-        AWSS3Service s3 = new AWSS3Service();
-        VideoConverter converter = new VideoConverter();
-        SubtitleService subtitles = new SubtitleService();
-        StreamingService streaming = new StreamingService();
-
-        // Processo complexo e acoplado
-        if (auth.authenticate(userId, token)) {
-            byte[] rawVideo = s3.downloadFromS3("videos-bucket", videoId);
-            byte[] convertedVideo = converter.convert(rawVideo, "MP4");
-            String subs = subtitles.getSubtitles(videoId, "pt-BR");
-
-            Video video = new Video(videoId, "Movie Title", convertedVideo);
-            video.play();
-            streaming.startStream(convertedVideo);
-        }
+        StreamFlixFacade facade = new StreamFlixFacade(storageService);
+        facade.watchVideo("user123", "valid-token", "video456");
     }
-
-    // Se quiser usar Google Cloud, precisa duplicar código!
-    public void watchVideoFromGCS(String userId, String token, String videoId) {
-        AuthenticationService auth = new AuthenticationService();
-        GoogleCloudStorage gcs = new GoogleCloudStorage();
-        VideoConverter converter = new VideoConverter();
-        SubtitleService subtitles = new SubtitleService();
-        StreamingService streaming = new StreamingService();
-
-        if (auth.authenticate(userId, token)) {
-            byte[] rawVideo = gcs.retrieveFile("my-project", videoId);
-            byte[] convertedVideo = converter.convert(rawVideo, "MP4");
-            String subs = subtitles.getSubtitles(videoId, "pt-BR");
-
-            Video video = new Video(videoId, "Movie Title", convertedVideo);
-            video.play();
-            streaming.startStream(convertedVideo);
-        }
-    }
-
 }
