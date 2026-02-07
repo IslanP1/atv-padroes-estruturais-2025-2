@@ -1,10 +1,12 @@
 package br.edu.ifpb.padroes.atv1.streamflix;
 
-public class Video {
+import br.edu.ifpb.padroes.atv1.streamflix.decorators.IVideoComponent;
 
-    private String id;
-    private String title;
-    private byte[] data;
+public class Video implements IVideoComponent {
+
+    private final String id;
+    private final String title;
+    private final byte[] data;
 
     public Video(String id, String title, byte[] data) {
         this.id = id;

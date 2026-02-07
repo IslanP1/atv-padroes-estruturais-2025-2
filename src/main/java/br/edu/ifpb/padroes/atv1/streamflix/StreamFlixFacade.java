@@ -2,6 +2,7 @@ package br.edu.ifpb.padroes.atv1.streamflix;
 
 import br.edu.ifpb.padroes.atv1.streamflix.auth.AuthenticationService;
 import br.edu.ifpb.padroes.atv1.streamflix.converter.VideoConverter;
+import br.edu.ifpb.padroes.atv1.streamflix.decorators.IVideoComponent;
 import br.edu.ifpb.padroes.atv1.streamflix.services.IStorageService;
 import br.edu.ifpb.padroes.atv1.streamflix.stream.StreamingService;
 import br.edu.ifpb.padroes.atv1.streamflix.subtitle.SubtitleService;
@@ -21,6 +22,26 @@ public class StreamFlixFacade {
         this.storageService = storageService;
     }
 
+    public AuthenticationService getAuthService() {
+        return authService;
+    }
+
+    public VideoConverter getVideoConverter() {
+        return videoConverter;
+    }
+
+    public SubtitleService getSubtitleService() {
+        return subtitleService;
+    }
+
+    public StreamingService getStreamingService() {
+        return streamingService;
+    }
+
+    public IStorageService getStorageService() {
+        return storageService;
+    }
+
     public void watchVideo(String userId, String token, String videoId) {
         if (authService.authenticate(userId, token)) {
             byte[] rawVideo = storageService.save("videos-bucket", videoId);
@@ -34,5 +55,11 @@ public class StreamFlixFacade {
         else {
             System.out.println("Authentication failed. Cannot watch video.");
         }
+    }
+
+    public IVideoComponent getVideo(String videoId) {
+        byte[] rawVideo = storageService.save("videos-bucket", videoId);
+        byte[] convertedVideo = videoConverter.convert(rawVideo, "MP4");
+        return new Video(videoId, "Movie Title", convertedVideo);
     }
 }
