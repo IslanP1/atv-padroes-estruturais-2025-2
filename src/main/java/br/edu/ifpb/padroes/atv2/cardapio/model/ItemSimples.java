@@ -21,6 +21,6 @@ public class ItemSimples implements ItemCardapio {
 
     @Override
     public void exibirInformacoes(String indentacao) {
-        System.out.println(indentacao + "- " + nome + ": R$ " + preco);
+        System.out.println(indentacao + "- " + getNome() + ": R$ " + getPreco());
     }
 }

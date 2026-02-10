@@ -14,7 +14,7 @@ public class Combo implements ItemCardapio{
         this.itens = new ArrayList<>();
     }
 
-    void adicionarItem(ItemCardapio item) {
+    public void adicionarItem(ItemCardapio item) {
         itens.add(item);
     }
 
@@ -34,6 +34,9 @@ public class Combo implements ItemCardapio{
 
     @Override
     public void exibirInformacoes(String indentacao) {
-
+        System.out.println(indentacao + "+ " + nome + " | R$ " + String.format("%.2f", getPreco()));
+        for (ItemCardapio item : itens) {
+            item.exibirInformacoes(indentacao + " ");
+        }
     }
 }
